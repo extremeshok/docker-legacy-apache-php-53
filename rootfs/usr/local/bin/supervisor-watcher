@@ -1,0 +1,19 @@
+#!/bin/bash
+
+while true; do
+    echo "READY"
+    read line
+    x=$(echo "$line" | sed "s/.*len:\([0-9]\+\)/\1/")
+    read -r -d '' -n "$x" body
+    # exp=$(echo "$body" | sed "s/.*expected:\(0\|1\).*/\1/")
+    if [ -z "$DOCKER_ABORT_ON_FAILURE" ] || [ "$DOCKER_ABORT_ON_FAILURE" = "true" ]; then
+        killall -TERM supervisord
+    fi
+    echo -ne "RESULT 2\nOK"
+    # if [ "$exp" = "1" ]; then
+    #     echo -ne "RESULT 2\nOK"
+    # else
+    #     echo -ne "RESULT 2\nOK"
+    #     # echo -ne "RESULT 4\nFAIL"
+    # fi
+done

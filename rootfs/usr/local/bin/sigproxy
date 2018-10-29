@@ -1,0 +1,27 @@
+#!/bin/bash
+
+pid=''
+
+quit() {
+    trap '' INT QUIT TERM EXIT
+    if [ -n "$pid" ] && ps -p "$pid" > /dev/null; then
+        grandchild=$(pgrep -P "$pid")
+        if [ $? -eq 0 ]; then
+            kill "-$1" "$grandchild"
+            while ps -p "$grandchild"; do
+                :
+            done
+        else
+            kill "-$1" "$pid"
+            wait "$pid"
+        fi
+    fi
+}
+
+trap "quit TERM" INT
+trap "quit QUIT" QUIT
+trap "quit TERM" TERM EXIT
+
+"$@" &
+pid=$!
+wait "$pid"
