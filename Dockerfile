@@ -14,6 +14,7 @@ ENV LANG=${OS_LOCALE} \
 
 WORKDIR /tmp/provisioning/
 
+# Install
 RUN apt-get update \
 	&& SOFTWARE_BUILD_DEPS=" \
 	apt-transport-https \
@@ -22,14 +23,12 @@ RUN apt-get update \
 	make \
 	python-software-properties \
 	software-properties-common \
-	unzip \
-	" \
-# Install
+	unzip " \
 	&& apt-get install --no-install-recommends -y $SOFTWARE_BUILD_DEPS sudo curl iputils-ping \
 	&& add-apt-repository -y ppa:rip84/php5 \
 	&& rm -rf /var/lib/apt/lists/*
 
-# install APACHE and Modules
+# install APACHE and Modules & disable default configs
 RUN apt-get update \
 	&& APACHE_BUILD_DEPS=" \
 		$APACHE_EXTRA_BUILD_DEPS \
@@ -37,23 +36,20 @@ RUN apt-get update \
 		apache2-threaded-dev \
 		libapache2-mod-geoip \
 		libapache2-mod-gnutls \
-		libapache2-mod-php5 \
-		" \
+		libapache2-mod-php5 " \
 	&& set -x \
 	&& apt-get install --no-install-recommends -y $APACHE_BUILD_DEPS \
-# disable default configs
   && rm -f /etc/apache2/sites-enabled/000-default \
   && rm -f /etc/apache2/sites-available/default \
 	&& rm -rf /var/lib/apt/lists/*
 
-	# install APACHE and Modules
+	# install APACHE mod_remoteip
 	RUN apt-get update \
 		&& set -x \
 		&& curl https://raw.githubusercontent.com/joeyhub/mod_remoteip-httpd22/master/mod_remoteip.c -o /tmp/mod_remoteip.c \
 		&& apxs2 -i -c -n mod_remoteip.so /tmp/mod_remoteip.c \
 		&& chmod 644 /usr/lib/apache2/modules/mod_remoteip.so \
 		&& rm -f /tmp/mod_remoteip.* \
-	# disable default configs
 		&& rm -rf /var/lib/apt/lists/*
 
 # install PHP and extensions
@@ -79,8 +75,7 @@ RUN apt-get update \
 		php5-pspell \
 		php5-recode \
 		php5-sqlite \
-		php5-tidy \
-		" \
+		php5-tidy " \
 	&& set -x \
 	&& apt-get install --no-install-recommends -y $PHP_BUILD_DEPS \
   && rm -rf /var/lib/apt/lists/*
@@ -124,15 +119,11 @@ RUN APACHE_ENABLE_MODULES=" \
 		rewrite \
 		setenvif \
 		ssl \
-		status \
-		" \
+		status " \
 	&& set -x \
 	&& a2enmod $APACHE_ENABLE_MODULES \
-# fix permissions
-#	&& chown -R www-data:www-data /var/lib/php5 \
 	&& mkdir -p /var/www \
 	&& chown -R www-data:www-data /var/www \
-# CLEANUP
 	&& rm -rf /var/lib/apt/lists/*
 
 # Forward request and error logs to docker log collector
@@ -144,15 +135,14 @@ RUN	 mkdir -p /var/log/php \
 
 RUN	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# GEOIP databases
-RUN mkdir -p /usr/share/GeoIP && cd /usr/share/GeoIP \
-	&& curl -sS http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz -o GeoIP.dat.gz \
-	&& gunzip GeoIP.dat.gz \
-	&& curl -sS http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz -o GeoLiteCity.dat.gz \
-	&& gunzip GeoLiteCity.dat.gz \
-	&& curl -sS http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz -o GeoIPASNum.dat.gz \
-	&& gunzip GeoIPASNum.dat.gz \
-	&& rm -f /usr/share/GeoIP/*.dat.gz
+# deprecated, we now include the last available library
+# # GEOIP databases
+# RUN mkdir -p /usr/share/GeoIP && cd /usr/share/GeoIP \
+# 	&& curl -sS http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz -o GeoIP.dat.gz \
+# 	&& gunzip GeoIP.dat.gz \
+# 	&& curl -sS http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz -o GeoLiteCity.dat.gz \
+# 	&& gunzip GeoLiteCity.dat.gz \
+# 	&& rm -f /usr/share/GeoIP/*.dat.gz
 
 # Supervisor Demon manager and cron
 RUN apt-get update \

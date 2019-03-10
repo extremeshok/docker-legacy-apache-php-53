@@ -1,0 +1,1 @@
+LoadModule geoip_module /usr/lib/apache2/modules/mod_geoip.so
