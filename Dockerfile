@@ -163,6 +163,6 @@ COPY rootfs/ /
 
 RUN chmod 777 /usr/local/bin/supervisor-watcher
 RUN chmod 777 /usr/local/bin/sigproxy
-RUN chmod 777 /xshok-fix.sh
+RUN chmod 744 /docker-entrypoint.sh
 
-CMD ["/usr/bin/supervisord"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
