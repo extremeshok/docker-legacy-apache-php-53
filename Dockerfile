@@ -5,12 +5,13 @@ MAINTAINER Adrian Kriel <admin@extremeshok.com>
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV PHP_VERSION=5.3 \
-	OS_LOCALE="en_US.UTF-8"
+ENV PHP_VERSION=5.3
+ENV OS_LOCALE="en_US.UTF-8"
+
 RUN locale-gen ${OS_LOCALE}
-ENV LANG=${OS_LOCALE} \
-    LANGUAGE=${OS_LOCALE} \
-    LC_ALL=${OS_LOCALE}
+ENV LANG=${OS_LOCALE}
+ENV LANGUAGE=${OS_LOCALE}
+ENV LC_ALL=${OS_LOCALE}
 
 WORKDIR /tmp/provisioning/
 
@@ -157,19 +158,11 @@ WORKDIR /var/www/
 
 EXPOSE 80 443
 
-COPY ./rootfs/etc/apache2/conf.d/other-vhosts-access-log /etc/apache2/conf.d/other-vhosts-access-log
-COPY ./rootfs/etc/apache2/mods-enabled/geoip.conf /etc/apache2/mods-enabled/geoip.conf
-COPY ./rootfs/etc/apache2/mods-enabled/negotiation.conf /etc/apache2/mods-enabled/negotiation.conf
-COPY ./rootfs/etc/apache2/sites-enabled/default.conf /etc/apache2/sites-enabled/default.conf
-COPY ./rootfs/etc/apache2/apache2.conf /etc/apache2/apache2.conf
-COPY ./rootfs/etc/php5/apache2/conf.d/apc.ini /etc/php5/apache2/conf.d/apc.ini
-COPY ./rootfs/etc/php5/apache2/conf.d/custom.ini /etc/php5/apache2/conf.d/custom.ini
-
-COPY ./rootfs/etc/supervisord/ /etc/supervisor/
-COPY ./rootfs/usr/local/bin/supervisor-watcher /usr/local/bin/supervisor-watcher
-COPY ./rootfs/usr/local/bin/sigproxy /usr/local/bin/sigproxy
+# add local files
+COPY rootfs/ /
 
 RUN chmod 777 /usr/local/bin/supervisor-watcher
 RUN chmod 777 /usr/local/bin/sigproxy
+RUN chmod 777 /xshok-fix.sh
 
 CMD ["/usr/bin/supervisord"]
