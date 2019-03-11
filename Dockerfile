@@ -159,7 +159,7 @@ WORKDIR /var/www/
 EXPOSE 80 443
 
 # add local files
-COPY rootfs/ /
+COPY ./rootfs/ /
 
 RUN chmod 777 /usr/local/bin/supervisor-watcher
 RUN chmod 777 /usr/local/bin/sigproxy
