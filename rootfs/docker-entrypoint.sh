@@ -8,4 +8,4 @@ if [ ! -f "/tmp/fixed_ownership" ] ; then
 fi
 
 echo "launching supervisord"
-exec /usr/bin/supervisord
+exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
