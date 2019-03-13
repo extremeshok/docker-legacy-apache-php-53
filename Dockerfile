@@ -57,7 +57,6 @@ RUN apt-get update \
 RUN apt-get update \
 	&& PHP_BUILD_DEPS=" \
 		$PHP_EXTRA_BUILD_DEPS \
-		php-apc \
 		php-pear \
 		php5-cli \
 		php5-curl \
@@ -81,6 +80,8 @@ RUN apt-get update \
 	&& apt-get install --no-install-recommends -y $PHP_BUILD_DEPS \
   && rm -rf /var/lib/apt/lists/*
 
+# install ZendOpcache
+RUN pecl install ZendOpcache
 
 # php-redis
 RUN curl -Ss https://codeload.github.com/phpredis/phpredis/zip/master -o /tmp/provisioning/phpredis.zip \
