@@ -146,9 +146,9 @@ RUN	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # 	&& gunzip GeoLiteCity.dat.gz \
 # 	&& rm -f /usr/share/GeoIP/*.dat.gz
 
-# Supervisor Demon manager and cron
+# Supervisor Demon manager , cron and mysql
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends cron supervisor
+	&& apt-get install -y --no-install-recommends cron supervisor mysql-client
 
 RUN apt-get update \
 	&& apt-get purge -y --auto-remove $SOFTWARE_BUILD_DEPS \
