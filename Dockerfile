@@ -84,7 +84,7 @@ RUN apt-get update \
 RUN pecl install ZendOpcache
 
 # php-redis 4.3.0
-RUN curl -Ss https://github.com/phpredis/phpredis/archive/4.3.0.zip -o /tmp/provisioning/phpredis.zip \
+RUN curl -Ss https://codeload.github.com/phpredis/phpredis/zip/4.3.0 -o /tmp/provisioning/phpredis.zip \
 	&& unzip -o /tmp/provisioning/phpredis.zip -d /tmp/provisioning/ \
 	&& cd /tmp/provisioning/phpredis-master \
 	&& phpize \
